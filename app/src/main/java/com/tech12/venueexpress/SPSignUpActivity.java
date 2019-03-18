@@ -24,7 +24,6 @@ public class SPSignUpActivity extends AppCompatActivity {
     EditText email,password,name;
     Button btn_register;
     ProgressDialog pDialog;
-    Snackbar snackbar;
     View view;
     FirebaseAuth mAuth;
     DatabaseReference databaseReference;
@@ -61,7 +60,7 @@ public class SPSignUpActivity extends AppCompatActivity {
         else{
             pDialog = new ProgressDialog(this);
             pDialog.setTitle("Creating your account");
-            pDialog.setMessage("Please wait");
+            pDialog.setMessage("Please wait...");
             pDialog.show();
             pDialog.setCancelable(false);
             mAuth.createUserWithEmailAndPassword(mail,pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -73,29 +72,36 @@ public class SPSignUpActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<Void> task) {
                                 if(task.isSuccessful()){
                                     pDialog.dismiss();
-                                    //Snackbar.make(view, "Please check your email for verification.", Snackbar.LENGTH_LONG).show();
-                                    Toast.makeText(SPSignUpActivity.this, "Please check your email for verification", Toast.LENGTH_LONG).show();
+
+                                    Toast.makeText(getApplicationContext(), "Please check your email for verification", Toast.LENGTH_LONG).show();
                                     String userId = mAuth.getCurrentUser().getUid();
                                     DatabaseReference currentUser = databaseReference.child(userId);
                                     currentUser.child("Email").setValue(mail);
                                     currentUser.child("Name").setValue(username);
                                     currentUser.child("Password").setValue(pass);
 
-                                    Intent intent = new Intent(SPSignUpActivity.this,SPLoginActivity.class);
-                                    startActivity(intent);
+                                    startActivity(new Intent(getApplicationContext(), SPLoginActivity.class));
                                     finish();
                                 }
                                 else{
-                                    Snackbar.make(view, task.getException().getMessage(), Snackbar.LENGTH_LONG).show();
+                                    email.setText("");
+                                    name.setText("");
+                                    password.setText("");
                                     pDialog.dismiss();
+                                    Snackbar.make(view, task.getException().getMessage(), Snackbar.LENGTH_LONG).show();
+
                                 }
                             }
                         });
 
                     }
                     else{
-                        Snackbar.make(view, task.getException().getMessage(), Snackbar.LENGTH_LONG).show();
+                        email.setText("");
+                        name.setText("");
+                        password.setText("");
                         pDialog.dismiss();
+                        Snackbar.make(view, task.getException().getMessage(), Snackbar.LENGTH_LONG).show();
+
                     }
                 }
             });

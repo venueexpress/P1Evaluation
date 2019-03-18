@@ -27,11 +27,11 @@ public class MainActivity extends AppCompatActivity {
     DatabaseReference customerRef;
     DatabaseReference spRef;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -46,8 +46,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if(dataSnapshot.hasChild(currentuid))
                     {
-                        Intent intent = new Intent(MainActivity.this,CustomerHomeActivity.class);
-                        startActivity(intent);
+                        startActivity( new Intent(getApplicationContext(), CustomerHomeActivity.class));
                     }
                 }
 
@@ -62,8 +61,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if(dataSnapshot.hasChild(currentuid))
                     {
-                        Intent intent = new Intent(MainActivity.this,SPHomeActivity.class);
-                        startActivity(intent);
+                        startActivity( new Intent(getApplicationContext(), SPHomeActivity.class));
                     }
                 }
                 @Override
@@ -74,25 +72,21 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-
         customer = (Button) findViewById(R.id.customer);
         serviceProvider = (Button) findViewById(R.id.serviceProvider);
         
         customer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent1 = new Intent(MainActivity.this,CustomerLoginActivity.class);
-                startActivity(intent1);
-                finish();
+                startActivity( new Intent(getApplicationContext(),CustomerLoginActivity.class));
+
             }
         });
 
         serviceProvider.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent1 = new Intent(MainActivity.this,SPLoginActivity.class);
-                startActivity(intent1);
-                finish();
+                startActivity( new Intent(getApplicationContext(),SPLoginActivity.class));
             }
         });
     }

@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -28,6 +29,7 @@ public class SPLoginActivity extends AppCompatActivity {
     EditText email,password;
     Button btn_login;
     Button btn_newAccount;
+    TextView forgot_password;
     View view;
     FirebaseAuth mAuth;
     ProgressDialog pDialog;
@@ -45,6 +47,7 @@ public class SPLoginActivity extends AppCompatActivity {
         email = (EditText) findViewById(R.id.sp_login_email);
         password = (EditText) findViewById(R.id.sp_login_password);
         btn_login = (Button) findViewById(R.id.sp_btn_login);
+        forgot_password = (TextView) findViewById(R.id.sp_forgot_password_tv);
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -64,13 +67,20 @@ public class SPLoginActivity extends AppCompatActivity {
 
             }
         });
+        forgot_password.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(),SPForgotPasswordActivity.class));
+                finish();
+            }
+        });
     }
 
     private void startSignin() {
 
         final String mail = email.getText().toString();
         String pass = password.getText().toString();
-        pDialog.setTitle("Signing In");
+        pDialog.setTitle("Signing in");
         pDialog.setMessage("Please Wait...");
         pDialog.show();
         pDialog.setCancelable(false);
@@ -85,30 +95,41 @@ public class SPLoginActivity extends AppCompatActivity {
                     if(task.isSuccessful()){
                         if(mAuth.getCurrentUser().isEmailVerified()){
                             pDialog.dismiss();
+
                             currentuid = mAuth.getCurrentUser().getUid();
                             spRef.addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     if(dataSnapshot.hasChild(currentuid))
                                     {
-                                        Intent intent = new Intent(SPLoginActivity.this,SPHomeActivity.class);
-                                        startActivity(intent);
+                                        startActivity( new Intent(getApplicationContext(), SPHome1Activity.class));
+                                        finish();
+
                                     }
                                     else
-                                    {
-                                        Toast.makeText(SPLoginActivity.this, "No Such Customer found", Toast.LENGTH_LONG).show();
+                                    {   email.setText("");
+                                        password.setText("");
+                                        Snackbar.make(view, "No such service provider found", Snackbar.LENGTH_LONG).show();
                                         mAuth.signOut();
                                     }
                                 }
-
                                 @Override
                                 public void onCancelled(@NonNull DatabaseError databaseError) {
 
                                 }
                             });
                         }
+                        else{
+                            email.setText("");
+                            password.setText("");
+                            pDialog.dismiss();
+                            Snackbar.make(view, "Please verify your email address", Snackbar.LENGTH_LONG).show();
+
+                        }
                     }
                     else{
+                        email.setText("");
+                        password.setText("");
                         pDialog.dismiss();
                         Snackbar.make(view, task.getException().getMessage(), Snackbar.LENGTH_LONG).show();
 

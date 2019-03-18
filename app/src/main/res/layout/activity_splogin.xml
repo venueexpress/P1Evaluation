@@ -46,6 +46,15 @@
             />
     </android.support.design.widget.TextInputLayout>
 
+    <TextView
+        android:id="@+id/sp_forgot_password_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Forgot Password?"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/orange"
+        android:gravity="center"/>
+
     <Button
         android:id="@+id/sp_btn_login"
         android:layout_width="match_parent"

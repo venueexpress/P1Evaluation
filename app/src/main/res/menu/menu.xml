@@ -2,11 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:id="@+id/add"
-        android:title="Add Vanue" />
-    <item android:id="@+id/time"
-        android:title="Add DateTime" />
-    <item android:id="@+id/menu"
-        android:title="Add Location" />
+        android:title="Add Venue" />
     <item android:id="@+id/logout"
         android:title="Log Out" />
 

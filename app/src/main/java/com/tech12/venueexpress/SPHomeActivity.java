@@ -16,8 +16,11 @@ import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 public class SPHomeActivity extends AppCompatActivity {
@@ -25,6 +28,8 @@ public class SPHomeActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
+    ImageView img;
+    TextView sna,spr,scp;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,71 +37,42 @@ public class SPHomeActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         String id =mAuth.getCurrentUser().getUid();
-
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("Service Providers").child(id).child("Venue");
 
-        recyclerView =(RecyclerView)findViewById(R.id.recycleview);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        final FirebaseRecyclerAdapter<Venue,VenueViewHolder> firebaseRecyclerAdapter;
-        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Venue, VenueViewHolder>(
-                Venue.class,
-                R.layout.show_venue,
-                VenueViewHolder.class,
-                mDatabase
-        ) {
+        img = (ImageView)findViewById(R.id.simage);
+        sna=(TextView)findViewById(R.id.sname);
+        spr=(TextView)findViewById(R.id.sprice);
+        scp=(TextView)findViewById(R.id.scapacity);
+        mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
-            protected void populateViewHolder(VenueViewHolder viewHolder, Venue model, int position) {
-                viewHolder.setName(model.getName());
-                viewHolder.setCapacity(model.getCapacity());
-                viewHolder.setPrice(model.getPrice());
-                viewHolder.setImage(getApplicationContext(), model.getImage());
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists())
+                {
+
+                    String i = dataSnapshot.child("image").getValue().toString();
+                    String n = dataSnapshot.child("VName").getValue().toString();
+                    String c = dataSnapshot.child("Capacity").getValue().toString();
+                    String p = dataSnapshot.child("Price").getValue().toString();
+
+                    Picasso.with(getApplicationContext()).load(i).into(img);
+                    sna.setText(n);
+                    spr.setText(p);
+                    scp.setText(c);
+
+                }
+
+
             }
-        };
-        recyclerView.setAdapter(firebaseRecyclerAdapter);
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
-    public static class VenueViewHolder extends RecyclerView.ViewHolder
-    {
 
-        View mview;
-        public VenueViewHolder(@NonNull View itemView) {
-            super(itemView);
-            mview=itemView;
 
-        }
-        public void setName(String n)
-        {
-            TextView name = (TextView)mview.findViewById(R.id.sname);
-            name.setText(n);
-
-        }
-        public void setCapacity(String c)
-        {
-            TextView capacity = (TextView) mview.findViewById(R.id.scapacity);
-            capacity.setText(c);
-
-        }
-        public void setPrice(String p)
-        {
-            TextView price = (TextView) mview.findViewById(R.id.sprice);
-            price.setText(p);
-
-        }
-        public  void setImage(final Context cxt, final String img)
-        {
-            final ImageView image= (ImageView)mview.findViewById(R.id.simage);
-
-            Picasso.with(cxt).load(img).into(image);
-
-        }
-    }
 
 
     @Override
@@ -116,23 +92,14 @@ public class SPHomeActivity extends AppCompatActivity {
 
         if(item.getItemId()==R.id.add)
         {
-            startActivity(new Intent(SPHomeActivity.this, AddVenue.class));
+            startActivity(new Intent(getApplicationContext(), SPHome1Activity.class));
             return true;
-        }
-        if(item.getItemId()==R.id.time)
-        {
-            startActivity(new Intent(SPHomeActivity.this, AddDateTime.class));
-            return  true;
-        }
-        if(item.getItemId()==R.id.menu)
-        {
-            startActivity(new Intent(SPHomeActivity.this, MapsActivity.class));
-            return  true;
         }
         if(item.getItemId()==R.id.logout)
 
         {
             mAuth.signOut();
+            finish();
             startActivity(new Intent(SPHomeActivity.this, SPLoginActivity.class));
             return true;
         }

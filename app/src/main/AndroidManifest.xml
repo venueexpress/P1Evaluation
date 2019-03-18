@@ -27,15 +27,25 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CustomerLoginActivity" />
-        <activity android:name=".SPLoginActivity" />
-        <activity android:name=".SPSignUpActivity" />
-        <activity android:name=".CustomerSignUpActivity" />
         <activity
+            android:name=".CustomerLoginActivity"
+            android:label="Customer Login" />
+        <activity
+            android:name=".SPLoginActivity"
+            android:label="Service Provider Login" />
+        <activity
+            android:name=".SPSignUpActivity"
+            android:label="Service Provider Signup" />
+        <activity
+            android:name=".CustomerSignUpActivity"
+            android:label="Customer Signup" />
+        <activity
+            android:name=".CustomerHomeActivity"
             android:label="Home"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:name=".CustomerHomeActivity" />
-        <activity android:name=".SPHomeActivity" />
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".SPHomeActivity"
+            android:label="Home" />
         <activity android:name=".AddVenue" />
         <activity android:name=".AddDateTime" />
         <!--
@@ -55,8 +65,14 @@
             android:label="@string/title_activity_maps" />
         <activity
             android:name=".SPHome1Activity"
-            android:label="@string/title_activity_sphome1"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:label="Add Venue"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:label="Reset Password"
+            android:name=".CustomerForgotPasswordActivity" />
+        <activity
+            android:label="Reset Password"
+            android:name=".SPForgotPasswordActivity"></activity>
     </application>
 
 </manifest>

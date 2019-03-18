@@ -10,13 +10,13 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -28,6 +28,7 @@ public class CustomerLoginActivity extends AppCompatActivity {
     EditText email,password;
     Button btn_login;
     Button btn_newAccount;
+    TextView forgot_password;
     View view;
     FirebaseAuth mAuth;
     ProgressDialog pDialog;
@@ -46,6 +47,7 @@ public class CustomerLoginActivity extends AppCompatActivity {
         email = (EditText) findViewById(R.id.customer_login_email);
         password = (EditText) findViewById(R.id.customer_login_password);
         btn_login = (Button) findViewById(R.id.customer_btn_login);
+        forgot_password = (TextView) findViewById(R.id.customer_forgot_password_tv);
 
         mAuth = FirebaseAuth.getInstance();
         pDialog = new ProgressDialog(this);
@@ -64,13 +66,22 @@ public class CustomerLoginActivity extends AppCompatActivity {
 
             }
         });
+
+        forgot_password.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(), CustomerForgotPasswordActivity.class));
+                finish();
+
+            }
+        });
     }
 
     private void startSignin() {
 
         String mail = email.getText().toString();
         String pass = password.getText().toString();
-        pDialog.setTitle("Signing In");
+        pDialog.setTitle("Signing in");
         pDialog.setMessage("Please Wait...");
         pDialog.show();
         pDialog.setCancelable(false);
@@ -92,28 +103,34 @@ public class CustomerLoginActivity extends AppCompatActivity {
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     if(dataSnapshot.hasChild(currentuid))
                                     {
-                                        Intent intent = new Intent(CustomerLoginActivity.this,CustomerHomeActivity.class);
-                                        startActivity(intent);
+                                        startActivity(new Intent(getApplicationContext(),CustomerHomeActivity.class));
+                                        finish();
                                     }
                                     else
-                                    {
-                                        Toast.makeText(CustomerLoginActivity.this, "No Such Customer found", Toast.LENGTH_LONG).show();
+                                    {   email.setText("");
+                                        password.setText("");
+                                        Snackbar.make(view, "No such customer found", Snackbar.LENGTH_LONG).show();
                                         mAuth.signOut();
 
                                     }
                                 }
-
                                 @Override
                                 public void onCancelled(@NonNull DatabaseError databaseError) {
 
                                 }
-                            }); }
+                            });
+                        }
                         else{
-                            Snackbar.make(view, "Please verify your email address", Snackbar.LENGTH_LONG).show();
+                            email.setText("");
+                            password.setText("");
                             pDialog.dismiss();
+                            Snackbar.make(view, "Please verify your email address", Snackbar.LENGTH_LONG).show();
+
                         }
                     }
                     else{
+                        email.setText("");
+                        password.setText("");
                         pDialog.dismiss();
                         Snackbar.make(view, task.getException().getMessage(), Snackbar.LENGTH_LONG).show();
 

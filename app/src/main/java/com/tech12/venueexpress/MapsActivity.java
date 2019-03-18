@@ -1,6 +1,7 @@
 package com.tech12.venueexpress;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -65,11 +66,13 @@ public class MapsActivity extends FragmentActivity implements
         addAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAuth = FirebaseAuth.getInstance();
-                String id = mAuth.getCurrentUser().getUid();
-                mDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("Service Providers").child(id).child("Address");
-                mDatabase.child("Latitude").setValue(lat);
-                mDatabase.child("Longitude").setValue(lon);
+
+                Intent in = new Intent(MapsActivity.this,SPHome1Activity.class);
+                in.putExtra("Key1", lat);
+                in.putExtra("Key2", lon);
+                startActivity(in);
+
+
 
             }
         });

@@ -14,30 +14,70 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class CustomerHomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     protected DrawerLayout drawer;
+    NavigationView mNavigationView;
+    TextView mName;
+    FirebaseAuth firebaseAuth;
+    FirebaseUser firebaseUser;
+    DatabaseReference databaseReference;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_customer_home);
 
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        mNavigationView = findViewById(R.id.nav_view);
+
+        mNavigationView.setNavigationItemSelectedListener(this);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-    }
 
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseUser = firebaseAuth.getCurrentUser();
+
+        //Go to your specific database directory or Child
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(firebaseUser.getUid());
+
+        //Connect the views of navigation bar
+        mName   = (TextView) mNavigationView.getHeaderView(0).findViewById(R.id.textView);
+
+
+        //Use you DB reference object and add this method to access realtime data
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                //Fetch values from you database child and set it to the specific view object.
+                String name = dataSnapshot.child("Name").getValue().toString();
+                mName.setText("Hello"+ " " + name.toUpperCase());
+
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
     public void rateMe() {
         try {
             startActivity(new Intent(Intent.ACTION_VIEW,
@@ -95,9 +135,6 @@ public class CustomerHomeActivity extends AppCompatActivity implements Navigatio
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
-
-
 
     @Override
     public void onBackPressed() {

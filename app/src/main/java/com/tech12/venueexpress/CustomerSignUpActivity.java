@@ -75,18 +75,20 @@ public class CustomerSignUpActivity extends AppCompatActivity {
                                 if(task.isSuccessful()){
                                     pDialog.dismiss();
                                     //Snackbar.make(view, "Please check your email for verification.", Snackbar.LENGTH_LONG).show();
-                                    Toast.makeText(CustomerSignUpActivity.this, "Please check your email for verification", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getApplicationContext(), "Please check your email for verification", Toast.LENGTH_LONG).show();
                                     String userId = mAuth.getCurrentUser().getUid();
                                     DatabaseReference currentUser = databaseReference.child(userId);
                                     currentUser.child("Email").setValue(mail);
                                     currentUser.child("Name").setValue(username);
                                     currentUser.child("Password").setValue(pass);
 
-                                    Intent intent = new Intent(CustomerSignUpActivity.this,CustomerLoginActivity.class);
-                                    startActivity(intent);
+                                    startActivity(new Intent(getApplicationContext(), CustomerLoginActivity.class));
                                     finish();
                                 }
                                 else{
+                                    email.setText("");
+                                    name.setText("");
+                                    password.setText("");
                                     Snackbar.make(view, task.getException().getMessage(), Snackbar.LENGTH_LONG).show();
                                     pDialog.dismiss();
                                 }
@@ -95,13 +97,14 @@ public class CustomerSignUpActivity extends AppCompatActivity {
 
                     }
                     else{
+                        email.setText("");
+                        name.setText("");
+                        password.setText("");
                         Snackbar.make(view, task.getException().getMessage(), Snackbar.LENGTH_LONG).show();
                         pDialog.dismiss();
                     }
                 }
             });
         }
-
     }
-
 }
